@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block script %}
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
+
+{% block title %}
+	Dashboard
+{% endblock %}
+
+{% block content %}
+    <div class="conteiner mt-5">
+        <h2>Bem vindo, {{ session['usuario']['nome'] }}</h2>
+
+        {% if session ['usuario']['papel'] == 'admin '%}
+
+        {% endif %}
+
+    </div>
+{% endblock %}
+
