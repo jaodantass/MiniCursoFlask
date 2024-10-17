@@ -13,17 +13,35 @@ controle_geral = ControleGeral()
 
 # --------------------------------------------- Rotas de Autenticação ---------------------------------------------
 
-# Rota principal (index) que redireciona para o login ou o dashboard
+# Rota principal (index) redireciona para login ou dashboard
 @app.route('/')
 def index():
-    # Aqui vamos redirecionar para o login ou o dashboard
-    pass
+    if 'usuario' in session:
+        return redirect(url_for('dashboard'))
+    return redirect(url_for('login'))
+
 
 # Rota para login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Aqui será feita a autenticação do usuário
-    pass
+    if request.method == 'POST':
+        nome_usuario = request.json.get('nome_usuario')  # Receber os dados como JSON
+        senha = request.json.get('senha')
+
+        # Cria uma instância da classe 'usuarios'
+        user_instance = Usuario()
+
+        # Autenticar usuário no banco de dados
+        user = user_instance.pesquisar_usuario_por_nome(nome_usuario)
+
+        if user and check_password_hash(user['senha_hash'], senha):  # Agora acessamos como dicionário
+            session.permanent = True
+            session['usuario'] = {'nome': user['nome_usuario'], 'id': user['id'], 'papel': user['papel']}
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'status': 'invalido'})
+
+    return render_template('login.html')
 
 # Rota para logout
 @app.route('/logout')
