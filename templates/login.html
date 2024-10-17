@@ -1,4 +1,36 @@
 {% extends "base.html" %}
 
+{% block script %}
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}
 
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-dark text-white text-center">Login</div>
+                    <div class="card-body">
+                        <form method="POST" id="loginForm">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Nome de Usuário</label>
+                                <input type="text" class="form-control" id="username"
+                                       name="username" placeholder="Digite seu nome de usuário" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="senha" class="form-label">Senha</label>
+                                <input type="password" class="form-control" id="senha" name="senha"
+                                       placeholder="Digite sua senha" required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Entrar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
