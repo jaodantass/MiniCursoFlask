@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
-from modelo.usuario import usuarios  # Modelo de usuários
-from modelo.tarefa import tarefa  # Modelo de tarefas
+from modelo.Usuario import Usuario  # Modelo de usuários
+from modelo.Tarefa import Tarefa  # Modelo de tarefas
 from controle.controlegeral import ControleGeral  # Controle para interagir com o banco de dados
 from datetime import timedelta
 
@@ -28,7 +28,7 @@ def login():
         senha = request.json.get('senha')
 
         # Cria uma instância da classe 'usuarios'
-        user_instance = usuarios()
+        user_instance = Usuario()
 
         # Autenticar usuário no banco de dados
         user = user_instance.pesquisar_usuario_por_nome(nome_usuario)
@@ -64,7 +64,7 @@ def dashboard():
     else:
         # Obtenha as tarefas do usuário logado
         usuario_id = session['usuario']['id']
-        tarefa_instance = tarefa()  # Criar instância da classe 'tarefa'
+        tarefa_instance = Tarefa()  # Criar instância da classe 'tarefa'
         tarefas = tarefa_instance.obter_tarefas_por_usuario(usuario_id)  # Chamar o método corretamente
         return render_template('dashboard.html', tarefas=tarefas)  # Renderiza o dashboard para usuários comuns
 
@@ -78,10 +78,10 @@ def gerenciar_tarefas():
         return redirect(url_for('dashboard'))
 
     # Busca todas as tarefas
-    tarefas = tarefa().listar_tarefas()
+    tarefas = Tarefa().listar_tarefas()
 
     # Busca todos os usuários para o dropdown de atribuição de tarefas
-    usuarios_list = usuarios().listaTodos()
+    usuarios_list = Usuario().listaTodos()
 
     return render_template('gerenciar_tarefas.html', tarefas=tarefas, usuarios=usuarios_list)
 
@@ -98,7 +98,7 @@ def salvar_tarefa():
     id_tarefa = request.form.get('id')  # Pegue o ID da tarefa, se existir
 
     # Instância da classe tarefa
-    nova_tarefa = tarefa()
+    nova_tarefa = Tarefa()
 
     if id_tarefa:  # Se houver um ID, atualize a tarefa existente
         nova_tarefa = nova_tarefa.buscar_tarefa_por_id(id_tarefa)
@@ -128,7 +128,7 @@ def excluir_tarefa(id):
         return redirect(url_for('dashboard'))
 
     # Excluir tarefa
-    tarefa_excluir = tarefa()
+    tarefa_excluir = Tarefa()
     tarefa_excluir.id = id
     tarefa_excluir.excluir()
 
@@ -146,7 +146,7 @@ def gerenciar_usuarios():
         return redirect(url_for('dashboard'))
 
     controle = ControleGeral()
-    lista_usuarios = usuarios().listaTodos()
+    lista_usuarios = Usuario().listaTodos()
     return render_template('gerenciar_usuarios.html', usuarios=lista_usuarios)
 
 
@@ -164,7 +164,7 @@ def salvar_usuario():
 
     controle = ControleGeral()
     if id_usuario:  # Se houver um ID, estamos editando
-        usuario = usuarios()
+        usuario = Usuario()
         usuario.id = id_usuario
         usuario.nome_usuario = nome_usuario
         usuario.senha_hash = generate_password_hash(senha)
@@ -172,7 +172,7 @@ def salvar_usuario():
         usuario.atualizar()  # Implementar o método `atualizar` no modelo
         flash('Usuário atualizado com sucesso!', 'success')
     else:  # Novo usuário
-        usuario = usuarios()
+        usuario = Usuario()
         usuario.nome_usuario = nome_usuario
         usuario.senha_hash = generate_password_hash(senha)
         usuario.papel = papel
@@ -189,7 +189,7 @@ def excluir_usuario(id):
         flash('Você não tem permissão para acessar esta página.', 'danger')
         return redirect(url_for('dashboard'))
 
-    usuario = usuarios()
+    usuario = Usuario()
     usuario.id = id
     print(usuario)
     usuario.excluir()
@@ -206,7 +206,7 @@ def detalhar_tarefa(id):
         return redirect(url_for('login'))
 
     # Buscar a tarefa pelo ID
-    tarefa_detalhe = tarefa().buscar_tarefa_por_id(id)
+    tarefa_detalhe = Tarefa().buscar_tarefa_por_id(id)
 
     if tarefa_detalhe is None:
         flash('Tarefa não encontrada.', 'danger')
@@ -222,7 +222,7 @@ def alterar_status_tarefa(id):
         return redirect(url_for('login'))
 
     # Buscar a tarefa para alteração
-    tarefa_status = tarefa().buscar_tarefa_por_id(id)
+    tarefa_status = Tarefa().buscar_tarefa_por_id(id)
 
     if tarefa_status is None:
         flash('Tarefa não encontrada.', 'danger')
