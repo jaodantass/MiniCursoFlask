@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block script %}
+    <script src="{{ url_for('static', filename='js/detalhar_tarefa.js') }}"></script>
+{% endblock %}
+
+{% block title %}Detalhes da Tarefa{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Detalhes da Tarefa</h2>
+
+    <div class="card">
+        <div class="card-header bg-dark text-white">Tarefa: {{ tarefa.titulo }}</div>
+        <div class="card-body">
+            <h5 class="card-title">Título: {{ tarefa.titulo }}</h5>
+            <p class="card-text"><strong>Descrição:</strong> {{ tarefa.descricao }}</p>
+
+            <!-- Formulário para o usuário alterar o status da tarefa -->
+            <form method="POST" action="{{ url_for('alterar_status_tarefa', id=tarefa.id) }}">
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status" required>
+                        <option value="Pendente" {% if tarefa.status == 'Pendente' %}selected{% endif %}>Pendente</option>
+                        <option value="Concluída" {% if tarefa.status == 'Concluída' %}selected{% endif %}>Concluída</option>
+                    </select>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success">Atualizar Status</button>
+                </div>
+            </form>
+
+            <p class="card-text mt-3"><strong>Data de Criação:</strong> {{ tarefa.criado_em.strftime('%d/%m/%Y %H:%M') }}</p>
+            <p class="card-text"><strong>Última Atualização:</strong> {{ tarefa.atualizado_em.strftime('%d/%m/%Y %H:%M') }}</p>
+
+            <!-- Link para voltar ao Dashboard -->
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">Voltar ao Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

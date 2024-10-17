@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/gerenciar_usuarios.js') }}"></script>
+{% endblock %}
+
+{% block title %}Gerenciar Usuários{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Gerenciamento de Usuários</h2>
+
+    <!-- Botão para adicionar novo usuário -->
+    <div class="d-flex justify-content-between mb-3">
+        <h4>Usuários Cadastrados</h4>
+        <button id="toggleFormBtn" class="btn btn-primary">Adicionar Novo Usuário</button>
+    </div>
+
+    <!-- Formulário de adicionar/editar usuário (inicialmente oculto) -->
+    <div id="formUsuario" style="display: none;">
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">Adicionar ou Editar Usuário</div>
+            <div class="card-body">
+                <form id="adicionarUsuarioForm" method="POST" action="{{ url_for('salvar_usuario') }}">
+                    <input type="hidden" id="id" name="id" value="">
+                    <div class="mb-3">
+                        <label for="nome_usuario" class="form-label">Nome de Usuário</label>
+                        <input type="text" class="form-control" id="nome_usuario" name="nome_usuario"
+                               placeholder="Digite o nome de usuário" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="senha" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite a senha"
+                               required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="papel" class="form-label">Papel</label>
+                        <select class="form-select" id="papel" name="papel" required>
+                            <option value="usuario">Usuário</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">Salvar Usuário</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de usuários -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nome de Usuário</th>
+                <th scope="col">Papel</th>
+                <th scope="col">Criado Em</th>
+                <th scope="col">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.nome_usuario }}</td>
+                <td>{{ usuario.papel }}</td>
+                <td>{{ usuario.criado_em.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning"
+                            onclick="editarUsuario({{ usuario.id }}, '{{ usuario.nome_usuario }}', '{{ usuario.papel }}')">
+                        Editar
+                    </button>
+                    <form action="{{ url_for('excluir_usuario', id=usuario.id) }}" method="POST"
+                          style="display:inline;">
+                        <input type="hidden" name="_method" value="POST">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Tem certeza que deseja excluir este usuário?');">Excluir
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

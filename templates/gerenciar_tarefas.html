@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/gerenciar_tarefas.js') }}"></script>
+{% endblock %}
+
+{% block title %}Gerenciar Tarefas{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Gerenciamento de Tarefas</h2>
+
+    <!-- Botão para adicionar nova tarefa -->
+    <div class="d-flex justify-content-between mb-3">
+        <h4>Tarefas Cadastradas</h4>
+        <button id="toggleFormBtn" class="btn btn-primary">Adicionar Nova Tarefa</button>
+    </div>
+
+    <!-- Formulário de adicionar/editar tarefa (inicialmente oculto) -->
+    <div id="formTarefa" style="display: none;">
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">Adicionar ou Editar Tarefa</div>
+            <div class="card-body">
+                <form id="adicionarTarefaForm" method="POST" action="{{ url_for('salvar_tarefa') }}">
+                    <input type="hidden" id="id" name="id">
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="titulo" name="titulo"
+                               placeholder="Digite o título da tarefa" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="descricao" name="descricao"
+                                  placeholder="Digite a descrição da tarefa"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status" required>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Concluída">Concluída</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="usuario_id" class="form-label">Usuário</label>
+                        <select class="form-select" id="usuario_id" name="usuario_id" required>
+                            <option value="" disabled selected>Selecione um usuário</option>
+                            {% for usuario in usuarios if usuario.papel == 'usuario' %}
+                            <option value="{{ usuario.id }}">{{ usuario.nome_usuario }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">Salvar Tarefa</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de tarefas -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Título</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Status</th>
+                <th scope="col">Usuário</th>
+                <th scope="col">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tarefa in tarefas %}
+            <tr>
+                <td>{{ tarefa.id }}</td>
+                <td>{{ tarefa.titulo }}</td>
+                <td>{{ tarefa.descricao }}</td>
+                <td>{{ tarefa.status }}</td>
+                <td>{{ tarefa.usuario_nome }}</td>
+                <td>
+                    <!-- Botão de Editar -->
+                    <button class="btn btn-sm btn-warning" onclick="editarTarefa('{{ tarefa.id }}', '{{ tarefa.titulo }}', '{{ tarefa.descricao }}', '{{ tarefa.status }}', '{{ tarefa.usuario_id }}')">Editar</button>
+
+                    <!-- Formulário de exclusão -->
+                    <form method="POST" action="{{ url_for('excluir_tarefa', id=tarefa.id) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta tarefa?');">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
