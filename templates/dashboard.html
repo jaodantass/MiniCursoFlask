@@ -13,7 +13,19 @@
         <h2>Bem vindo, {{ session['usuario']['nome'] }}</h2>
 
         {% if session ['usuario']['papel'] == 'admin '%}
-
+            <h3>Painel do Administrador</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-hearder bg-dark text-white">Gerenciar Usuarios</div>
+                        <div class="card-body">
+                            <p>Manter Usuarios</p>
+                            <a href="{{ url_for('gerenciar_usuarios') }}"
+                               class="btn btn-primary">Gerenciar Usuario</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% endif %}
 
     </div>
